@@ -24,7 +24,8 @@ let AuthService = class AuthService {
     }
     async validateUser(username, password) {
         const user = await this.usersService.findByUsername(username);
-        if (user && await bcrypt.compare(password, user.password)) {
+        let m = await bcrypt.compare(password, user.password);
+        if (user && m) {
             const { password, ...result } = user;
             return result;
         }
@@ -35,10 +36,7 @@ let AuthService = class AuthService {
         if (!user) {
             throw new Error('Invalid credentials');
         }
-        if (user.usertype !== 'Admin') {
-            throw new common_1.UnauthorizedException('Not authorized');
-        }
-        const payload = { username: user.username, sub: user.user_id, usertype: user.usertype };
+        const payload = { username: user.username, sub: user.user_id };
         return {
             access_token: this.jwtService.sign(payload),
             user,

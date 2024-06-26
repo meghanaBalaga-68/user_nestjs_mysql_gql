@@ -16,13 +16,14 @@ exports.UsersResolver = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const user_service_1 = require("./user.service");
 const user_entity_1 = require("./user.entity");
+const user_types_1 = require("./user.types");
 const auth_service_1 = require("../auth/auth.service");
 const common_1 = require("@nestjs/common");
 const login_response_1 = require("../auth/login.response");
 const common_2 = require("@nestjs/common");
+const graphql_2 = require("@nestjs/graphql");
 const create_user_input_1 = require("./dto/create.user.input");
 const auth_guard_1 = require("../guard/auth.guard");
-const role_guard_1 = require("../guard/role.guard");
 const role_decorator_1 = require("../decorator/role.decorator");
 let UsersResolver = class UsersResolver {
     constructor(userService, authService) {
@@ -38,15 +39,14 @@ let UsersResolver = class UsersResolver {
     async getUsers() {
         return this.userService.getUsers();
     }
-    async getUserById(id) {
-        return this.userService.getUserById(id);
+    async whoAmI(context) {
+        return context.req.user;
     }
     async login(username, password) {
         return this.authService.login(username, password);
     }
-    async deleteUsers(id) {
-        await this.userService.deleteUserById(id);
-        return true;
+    async deleteUser(id) {
+        return this.userService.deleteUser(id);
     }
 };
 exports.UsersResolver = UsersResolver;
@@ -66,19 +66,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersResolver.prototype, "updateUser", null);
 __decorate([
-    (0, graphql_1.Query)(returns => [user_entity_1.User]),
+    (0, graphql_1.Query)(returns => [user_types_1.UserGetType]),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersResolver.prototype, "getUsers", null);
 __decorate([
-    (0, graphql_1.Query)(returns => user_entity_1.User),
+    (0, graphql_1.Query)(returns => user_types_1.UserType),
     (0, common_1.UseGuards)(auth_guard_1.GqlAuthGuard),
-    __param(0, (0, graphql_1.Args)('id')),
+    __param(0, (0, graphql_2.Context)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UsersResolver.prototype, "getUserById", null);
+], UsersResolver.prototype, "whoAmI", null);
 __decorate([
     (0, graphql_1.Mutation)(returns => login_response_1.LoginResponse),
     __param(0, (0, graphql_1.Args)('username')),
@@ -89,13 +89,13 @@ __decorate([
 ], UsersResolver.prototype, "login", null);
 __decorate([
     (0, graphql_1.Mutation)(() => Boolean),
-    (0, common_1.UseGuards)(auth_guard_1.GqlAuthGuard, role_guard_1.RoleGuard),
+    (0, common_1.UseGuards)(auth_guard_1.GqlAuthGuard),
     (0, role_decorator_1.Roles)('Admin'),
     __param(0, (0, graphql_1.Args)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], UsersResolver.prototype, "deleteUsers", null);
+], UsersResolver.prototype, "deleteUser", null);
 exports.UsersResolver = UsersResolver = __decorate([
     (0, graphql_1.Resolver)(of => user_entity_1.User),
     __param(1, (0, common_2.Inject)((0, common_2.forwardRef)(() => auth_service_1.AuthService))),

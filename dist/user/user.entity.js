@@ -16,7 +16,8 @@ const user_types_1 = require("./user.types");
 const bcrypt = require("bcrypt");
 let User = class User {
     async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);
+        let data = await bcrypt.hash(this.password, 10);
+        this.password = data;
     }
     generateEmpId() {
         this.empId = 'EMP' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');

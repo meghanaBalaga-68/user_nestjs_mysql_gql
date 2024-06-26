@@ -18,13 +18,16 @@ let RoleGuard = class RoleGuard {
         this.reflector = reflector;
     }
     canActivate(context) {
-        const roles = this.reflector.get('usertypes', context.getHandler());
-        if (!roles) {
+        const ctx = graphql_1.GqlExecutionContext.create(context);
+        const requiredrole = this.reflector.get('usertypes', context.getHandler());
+        const { user } = ctx.getContext().req;
+        if (!requiredrole) {
             return true;
         }
-        const ctx = graphql_1.GqlExecutionContext.create(context);
-        const { user } = ctx.getContext().req;
-        return roles.includes(user.usertype);
+        if (requiredrole && user && user.usertype !== requiredrole) {
+            throw new common_1.ForbiddenException('Insufficient Permissions');
+        }
+        return true;
     }
 };
 exports.RoleGuard = RoleGuard;

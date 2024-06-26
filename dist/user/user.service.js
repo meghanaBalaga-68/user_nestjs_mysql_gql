@@ -24,12 +24,10 @@ let UserService = class UserService {
         this.userRepository = userRepository;
     }
     async createUser(createUserDto) {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
         const user = new user_entity_1.User();
         user.username = createUserDto.username;
         user.email = createUserDto.email;
-        user.password = hashedPassword;
+        user.password = createUserDto.password;
         user.phonenumber = createUserDto.phonenumber;
         user.shift = createUserDto.shift;
         user.usertype = createUserDto.usertype;
@@ -55,19 +53,16 @@ let UserService = class UserService {
     async getUsers() {
         return this.userRepository.find();
     }
-    async getUserById(id) {
-        const user = await this.userRepository.findOne({ where: { user_id: id } });
-        if (!user) {
-            throw new console_1.error('User Not Found');
-        }
-        return user;
-    }
     async findByUsername(username) {
         const user = await this.userRepository.findOne({ where: { username } });
         return user;
     }
-    async deleteUserById(userId) {
-        await this.userRepository.delete(userId);
+    async findOneById(user_id) {
+        return this.userRepository.findOne({ where: { user_id } });
+    }
+    async deleteUser(user_id) {
+        const result = await this.userRepository.delete(user_id);
+        return result.affected > 0;
     }
 };
 exports.UserService = UserService;

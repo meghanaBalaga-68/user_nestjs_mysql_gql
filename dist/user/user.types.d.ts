@@ -19,3 +19,8 @@ export declare class UserType {
     usertype: typeRole;
     created_at: Date;
 }
+export declare class UserGetType {
+    username: string;
+    empId: string;
+    usertype: typeRole;
+}

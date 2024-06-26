@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserType = exports.Shift = exports.typeRole = void 0;
+exports.UserGetType = exports.UserType = exports.Shift = exports.typeRole = void 0;
 const graphql_1 = require("@nestjs/graphql");
 var typeRole;
 (function (typeRole) {
@@ -66,4 +66,22 @@ __decorate([
 exports.UserType = UserType = __decorate([
     (0, graphql_1.ObjectType)()
 ], UserType);
+let UserGetType = class UserGetType {
+};
+exports.UserGetType = UserGetType;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], UserGetType.prototype, "username", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], UserGetType.prototype, "empId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => typeRole),
+    __metadata("design:type", String)
+], UserGetType.prototype, "usertype", void 0);
+exports.UserGetType = UserGetType = __decorate([
+    (0, graphql_1.ObjectType)()
+], UserGetType);
 //# sourceMappingURL=user.types.js.map
