@@ -13,8 +13,9 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
-    // console.log(user);
-    if (user && await bcrypt.compare(password, user.password) ) {
+    //console.log(user);
+    let m =await bcrypt.compare(password, user.password) 
+    if (user && m) {
       const { password, ...result } = user;
       return result;
     }
@@ -23,14 +24,14 @@ export class AuthService {
 
   async login(username: string, password: string) {
     const user = await this.validateUser(username, password);
-    // console.log({username, password});
+    // console.log(user);
     if (!user) {
       throw new Error('Invalid credentials');
     }
-    if(user.usertype !== 'Admin'){
-      throw new UnauthorizedException('Not authorized');
-    }
-    const payload = { username: user.username, sub: user.user_id, usertype: user.usertype };
+    // if(user.usertype !== 'Admin'){
+    //   throw new UnauthorizedException('Not authorized');
+    // }
+    const payload = { username: user.username, sub: user.user_id};
     return {
       access_token: this.jwtService.sign(payload),
       user,

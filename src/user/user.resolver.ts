@@ -1,13 +1,14 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './user.entity';
+import { UserGetType, UserType } from './user.types';
 
 import { AuthService } from 'src/auth/auth.service';
 import { UseGuards } from '@nestjs/common';
 
 import { LoginResponse } from 'src/auth/login.response';
 import { Inject, forwardRef } from '@nestjs/common';
-
+import { Context } from '@nestjs/graphql';
 import { CreateUserInput } from './dto/create.user.input';
 import { GqlAuthGuard } from 'src/guard/auth.guard';
 import { RoleGuard } from 'src/guard/role.guard';
@@ -39,16 +40,17 @@ export class UsersResolver {
     return this.userService.updateUser(id, input);
   }
 
-  @Query(returns => [User])
-  async getUsers(): Promise<User[]> {
+  @Query(returns => [UserGetType])
+  async getUsers(): Promise<UserGetType[]> {
     return this.userService.getUsers();
   }
 
-  @Query(returns => User)
-  @UseGuards(GqlAuthGuard)
-  async getUserById(@Args('id') id: string): Promise<User> {
-    return this.userService.getUserById(id);
+  
 
+  @Query(returns => UserType)
+  @UseGuards(GqlAuthGuard)
+  async whoAmI(@Context() context): Promise<User> {
+    return context.req.user;
   }
 
 
@@ -63,11 +65,11 @@ export class UsersResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(GqlAuthGuard, RoleGuard)
+  @UseGuards(GqlAuthGuard)
   @Roles('Admin')
-  async deleteUsers(@Args('id') id: string): Promise<boolean> {
-    await this.userService.deleteUserById(id);
-    return true;
+  async deleteUser(@Args('id') id: string): Promise<boolean> {
+    return this.userService.deleteUser(id);
+    
   }
 
 

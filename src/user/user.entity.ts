@@ -58,7 +58,9 @@ export class User{
 
     @BeforeInsert()
     async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);
+        let data = await bcrypt.hash(this.password, 10);
+        // console.log(this.password,data,'@password')
+        this.password=data
     }
 
     @BeforeInsert()

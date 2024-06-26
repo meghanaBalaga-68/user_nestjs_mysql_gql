@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
 
@@ -10,13 +10,16 @@ export class RoleGuard implements CanActivate{
 
 
     canActivate(context: ExecutionContext): boolean{
-        const roles = this.reflector.get<string[]>('usertypes', context.getHandler());
-        if(!roles){
+       
+        const ctx = GqlExecutionContext.create(context);
+        const requiredrole = this.reflector.get<string[]>('usertypes', context.getHandler());
+        const { user } = ctx.getContext().req;
+        if(!requiredrole){
             return true;
         }
-        const ctx = GqlExecutionContext.create(context);
-        const { user } = ctx.getContext().req;
-        return roles.includes(user.usertype);
-        
+        if(requiredrole && user && user.usertype !== requiredrole){
+            throw new ForbiddenException('Insufficient Permissions');
+        }
+        return true;
     }
 }

@@ -15,6 +15,6 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
     allowedHeaders: 'Content-type, Accept'
 })
-  await app.listen(process.env.PORT ||  3000, '0.0.0.0');
+  await app.listen(process.env.PORT ||  5000, '0.0.0.0');
 }
 bootstrap();

@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 import { CreateUserInput } from './dto/create.user.input';
 import { error } from 'console';
+import { UserGetType, UserType } from './user.types';
 
 @Injectable()
 export class UserService {
@@ -14,13 +15,12 @@ export class UserService {
   ) {}
 
   async createUser(createUserDto: CreateUserInput): Promise<User> {
-    const salt = await bcrypt.genSalt(10); // Generate a salt
-        const hashedPassword = await bcrypt.hash(createUserDto.password, salt); // Hash the password with the salt
+    
 
         const user = new User();
         user.username = createUserDto.username;
         user.email = createUserDto.email;
-        user.password = hashedPassword; // Store the hashed password
+        user.password = createUserDto.password; // Store the hashed password
         user.phonenumber = createUserDto.phonenumber;
         user.shift = createUserDto.shift;
         user.usertype = createUserDto.usertype;
@@ -49,17 +49,11 @@ export class UserService {
         return this.userRepository.findOne({where: {user_id: id}});
     }
 
-  async getUsers(): Promise<User[]> {
+  async getUsers(): Promise<UserGetType[]> {
     return this.userRepository.find();
   }
 
-  async getUserById(id: string): Promise<User | undefined> {
-    const user = await  this.userRepository.findOne({where: {user_id: id}});
-    if(!user){
-        throw new error('User Not Found');
-    }
-    return user;
-  }
+  
 
   async findByUsername(username: string): Promise<User | undefined> {
     const user =await this.userRepository.findOne({ where: { username } });
@@ -67,8 +61,13 @@ export class UserService {
     return user;
   }
 
-  async deleteUserById(userId: string): Promise<void>{
-    await this.userRepository.delete(userId);
+  async findOneById(user_id: string): Promise<UserType | undefined> {
+    return this.userRepository.findOne({ where: { user_id } });
+  }
+
+  async deleteUser(user_id: string): Promise<boolean>{
+    const result = await this.userRepository.delete(user_id);
+    return result.affected > 0;
   }
 
   

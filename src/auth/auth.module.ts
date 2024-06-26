@@ -6,7 +6,8 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt';
 import { LocalStrategy } from './local';
 import { jwtConstants } from './jwt.constants';
-
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGuard } from 'src/guard/role.guard';
 
 
 @Module({
@@ -18,7 +19,7 @@ import { jwtConstants } from './jwt.constants';
       signOptions: { expiresIn: '60m' },
     }),
   ],
-  providers: [AuthService, JwtStrategy, LocalStrategy],
+  providers: [AuthService, JwtStrategy, {provide: APP_GUARD, useClass: RoleGuard,},],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -46,3 +46,16 @@ export class UserType{
 
 
 }
+
+@ObjectType()
+export class UserGetType {
+    @Field(() => String)
+    username: string;
+
+    @Field(() => String)
+    empId: string;
+
+    @Field(() => typeRole)
+    usertype: typeRole;
+}
+

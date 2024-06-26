@@ -31,6 +31,12 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type UserGetType {
+  username: String!
+  empId: String!
+  usertype: typeRole!
+}
+
 type User {
   user_id: String!
   username: String!
@@ -45,19 +51,18 @@ type User {
 
 type LoginResponse {
   access_token: String!
-  user: UserType!
 }
 
 type Query {
-  getUsers: [User!]!
-  getUserById(id: String!): User!
+  getUsers: [UserGetType!]!
+  whoAmI: UserType!
 }
 
 type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(id: ID!, input: CreateUserInput!): User!
   login(username: String!, password: String!): LoginResponse!
-  deleteUsers(id: String!): Boolean!
+  deleteUser(id: String!): Boolean!
 }
 
 input CreateUserInput {
